@@ -3,13 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hesap Defteri</title>
+<title>Taksi Hesap Defteri PRO</title>
 
 <style>
 body {
   font-family: Arial, sans-serif;
-  background: #f2f4f8;
-  padding: 20px;
+  background: linear-gradient(135deg,#1e3c72,#2a5298);
+  padding: 15px;
+  color: white;
 }
 
 h1 {
@@ -18,10 +19,10 @@ h1 {
 
 .box {
   background: white;
+  color: black;
   padding: 15px;
   margin-bottom: 15px;
-  border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  border-radius: 12px;
 }
 
 input, button {
@@ -33,73 +34,126 @@ input, button {
 }
 
 button {
-  background: #2c3e50;
+  background: #2a5298;
   color: white;
   font-weight: bold;
   cursor: pointer;
 }
 
 .total {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
   text-align: center;
+}
+
+.card-box {
+  background:#fff;
+  color:black;
+  padding:10px;
+  border-radius:10px;
+  margin-top:10px;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🚖 Günlük Hesap Defteri</h1>
+<h1>🚖 Taksi Hesap PRO</h1>
 
 <div class="box">
-  <h3>Gelir</h3>
-  <input type="number" id="gelir" placeholder="TL gir">
-  <button onclick="gelirEkle()">Ekle</button>
+<h3>Gelir Ekle</h3>
+<input type="number" id="gelir" placeholder="Taksi Geliri (TL)">
+<input type="number" id="ekGelir" placeholder="Ek Gelir (TL)">
+<button onclick="gelirEkle()">Gelir Kaydet</button>
 </div>
 
 <div class="box">
-  <h3>Nakit Gider</h3>
-  <input type="number" id="nakit" placeholder="TL gir">
-  <button onclick="nakitEkle()">Ekle</button>
+<h3>Gider Ekle</h3>
+<input type="number" id="nakit" placeholder="Nakit Gider">
+<input type="number" id="kart" placeholder="Kart Gider">
+<button onclick="giderEkle()">Gider Kaydet</button>
 </div>
 
 <div class="box">
-  <h3>Kart Gider</h3>
-  <input type="number" id="kart" placeholder="TL gir">
-  <button onclick="kartEkle()">Ekle</button>
+<h3>💳 Kart Borcu Ekle</h3>
+<input type="text" id="kartAdi" placeholder="Kart Adı">
+<input type="number" id="kartToplam" placeholder="Toplam Borç">
+<input type="number" id="kartAsgari" placeholder="Asgari Tutar">
+<input type="date" id="kartTarih">
+<button onclick="kartEkle()">Kart Ekle</button>
+
+<div id="kartListesi"></div>
 </div>
 
 <div class="box total">
-  Toplam Bakiye: <span id="bakiye">0</span> TL
+Toplam Bakiye: <span id="bakiye">0</span> TL
 </div>
 
 <script>
-let gelir = 0;
-let nakit = 0;
-let kart = 0;
+let data = JSON.parse(localStorage.getItem("hesapData")) || {
+  gelir:0,
+  ekGelir:0,
+  nakit:0,
+  kart:0,
+  kartlar:[]
+};
+
+function kaydet(){
+  localStorage.setItem("hesapData",JSON.stringify(data));
+}
 
 function gelirEkle(){
-  gelir += Number(document.getElementById("gelir").value);
+  data.gelir += Number(document.getElementById("gelir").value);
+  data.ekGelir += Number(document.getElementById("ekGelir").value);
   document.getElementById("gelir").value="";
+  document.getElementById("ekGelir").value="";
+  kaydet();
   hesapla();
 }
 
-function nakitEkle(){
-  nakit += Number(document.getElementById("nakit").value);
+function giderEkle(){
+  data.nakit += Number(document.getElementById("nakit").value);
+  data.kart += Number(document.getElementById("kart").value);
   document.getElementById("nakit").value="";
+  document.getElementById("kart").value="";
+  kaydet();
   hesapla();
 }
 
 function kartEkle(){
-  kart += Number(document.getElementById("kart").value);
-  document.getElementById("kart").value="";
-  hesapla();
+  let kart = {
+    ad: document.getElementById("kartAdi").value,
+    toplam: document.getElementById("kartToplam").value,
+    asgari: document.getElementById("kartAsgari").value,
+    tarih: document.getElementById("kartTarih").value
+  };
+  data.kartlar.push(kart);
+  kaydet();
+  listele();
+}
+
+function listele(){
+  let alan = document.getElementById("kartListesi");
+  alan.innerHTML="";
+  data.kartlar.forEach(k=>{
+    alan.innerHTML += `
+      <div class="card-box">
+        <b>${k.ad}</b><br>
+        Toplam: ${k.toplam} TL<br>
+        Asgari: ${k.asgari} TL<br>
+        Son Ödeme: ${k.tarih}
+      </div>
+    `;
+  });
 }
 
 function hesapla(){
-  let bakiye = gelir - nakit - kart;
+  let bakiye = data.gelir + data.ekGelir - data.nakit - data.kart;
   document.getElementById("bakiye").innerText = bakiye;
 }
+
+hesapla();
+listele();
 </script>
 
 </body>
