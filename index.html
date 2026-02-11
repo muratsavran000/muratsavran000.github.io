@@ -1,10 +1,106 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hesap Defteri</title>
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background: #f2f4f8;
+  padding: 20px;
+}
+
+h1 {
+  text-align: center;
+}
+
+.box {
+  background: white;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+input, button {
+  width: 100%;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+button {
+  background: #2c3e50;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.total {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+</style>
 </head>
+
 <body>
-<h1>Hesap Defteri</h1>
-<p>Çalışıyor ✅</p>
+
+<h1>🚖 Günlük Hesap Defteri</h1>
+
+<div class="box">
+  <h3>Gelir</h3>
+  <input type="number" id="gelir" placeholder="TL gir">
+  <button onclick="gelirEkle()">Ekle</button>
+</div>
+
+<div class="box">
+  <h3>Nakit Gider</h3>
+  <input type="number" id="nakit" placeholder="TL gir">
+  <button onclick="nakitEkle()">Ekle</button>
+</div>
+
+<div class="box">
+  <h3>Kart Gider</h3>
+  <input type="number" id="kart" placeholder="TL gir">
+  <button onclick="kartEkle()">Ekle</button>
+</div>
+
+<div class="box total">
+  Toplam Bakiye: <span id="bakiye">0</span> TL
+</div>
+
+<script>
+let gelir = 0;
+let nakit = 0;
+let kart = 0;
+
+function gelirEkle(){
+  gelir += Number(document.getElementById("gelir").value);
+  document.getElementById("gelir").value="";
+  hesapla();
+}
+
+function nakitEkle(){
+  nakit += Number(document.getElementById("nakit").value);
+  document.getElementById("nakit").value="";
+  hesapla();
+}
+
+function kartEkle(){
+  kart += Number(document.getElementById("kart").value);
+  document.getElementById("kart").value="";
+  hesapla();
+}
+
+function hesapla(){
+  let bakiye = gelir - nakit - kart;
+  document.getElementById("bakiye").innerText = bakiye;
+}
+</script>
+
 </body>
 </html>
