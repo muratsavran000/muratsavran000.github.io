@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Hesap Defteri</title>
+</head>
+<body>
+<h1>Hesap Defteri</h1>
+<p>Çalışıyor ✅</p>
+</body>
+</html>
